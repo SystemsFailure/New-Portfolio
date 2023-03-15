@@ -51,9 +51,37 @@
 
         <div class="twosection">
 
+          <div class="wrapper-inner-content">
+
+            <div class="titile-what-cn-i-do" v-for="it in list_do" :key="it.id">
+              <span>{{ it.title }}</span>
+              <h6>
+                {{ it.content }}
+              </h6>
+            </div>
+
+          </div>
+
         </div>
 
         <div class="threesection">
+
+          <div class="title-bo">
+            <span>Contact with me</span>
+          </div>
+
+          <div class="name-and-email">
+            <input type="text" placeholder="name">
+            <input type="text" placeholder="email">
+          </div>
+
+          <div class="textarea-box">
+            <textarea name="" id="textarea-id-tx-messs" placeholder="message text"></textarea>
+          </div>
+
+          <div class="btn-5">
+            <span>Send</span>
+          </div>
 
         </div>
 
@@ -81,6 +109,14 @@ export default {
         {id: 5, icon: '/icons8-sql-100.png', tit: 'SQL', count: 69},
         {id: 5, icon: '/icons8-tensorflow-96.png', tit: 'Tensorflow', count: 32},
       ],
+
+      list_do: [
+        {id: 0, title: 'What can i do', content: 'Web Development & Design || ML & DML & AI || Robotics'},
+        {id: 1, title: 'Back-end', content: ' In terms of server development I can develop a server from scratch using various popular tools: python - FastApi, Django & DRF, ORM & CORE SqlAlchemy, Sql native, Nodejs - Express, NextJs, sequalize ORM, SocketIO, WebSockets and others'},
+        {id: 2, title: 'Fron-end', content: 'Regarding the client side - I can develop a site from scratch. Core Web Framework : Vue(3 version and all related technologies), TypeScript, JS native, main http-client - Axios, also have some experience with GraphQL.'},
+        {id: 3, title: 'Others', content: 'Figma design, Statistics & Analytics, 2D/3D data graphs in applicationsMachine Learning/DSP/AI (under study)Raspberry pi, Renegade Elite,orange pi,and others'},
+
+      ]
     }
   },
   methods: {
@@ -118,17 +154,217 @@ $text-handler-color: #00ccff;
   width: 100%;
   height: 100%;
   padding-top: 50px;
-  
+  overflow: hidden;
   .inner {
     width: 100%;
     height: 100%;
     display: flex;
     backdrop-filter: blur(7px);
 
-    .twosection {
-      width: 67%;
+    .threesection {
+      position: relative;
+      width: 33%;
       height: 100%;
       padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .title-bo {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 13px;
+        font-weight: bold;
+        margin-top: 40px;
+        font-family: monospace;
+        white-space: nowrap;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+      }
+
+      .btn-5 {
+        width: 25%;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        min-height: 30px;
+        position: absolute;
+        bottom: 250px;
+        border: 1px solid #222;
+        right: 25px;
+        cursor: pointer;
+
+        border: 0 solid;
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
+        outline: 1px solid;
+        outline-color: rgba(157, 157, 157, 0.5);
+        outline-offset: 0px;
+        text-shadow: none;
+        transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+      } 
+
+      .btn-5:hover {
+        border: 1px solid;
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, .5), 0 0 20px rgba(255, 255, 255, .2);
+        outline-color: rgba(255, 255, 255, 0);
+        outline-offset: 15px;
+        text-shadow: 1px 1px 2px #427388; 
+      }
+
+
+      .btn-send {
+        width: 25%;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        min-height: 30px;
+        position: absolute;
+        bottom: 250px;
+        border: 1px solid #222;
+        right: 25px;
+        cursor: pointer;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          background-color: rgba(255,255,255,0.1);
+          transition: all 0.3s;
+        }
+        &:hover::before {
+          opacity: 0 ;
+          transform: scale(0.5,0.5);
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          opacity: 0;
+          transition: all 0.3s;
+          border: 1px solid rgba(255,255,255,0.5);
+          transform: scale(1.2,1.2);
+        }
+        &:hover::after {
+          opacity: 1;
+          transform: scale(1,1);
+        }
+
+
+        span {
+          font-size: 15px;
+          text-transform: uppercase;
+
+        }
+      }
+
+      .textarea-box {
+        position: absolute;
+        top: 200px;
+        width: 90%;
+        height: fit-content;
+        padding: 5px;
+
+        textarea {
+          width: 250px;
+          margin-left: 10px;
+          padding: 10px;
+          border: 1px solid #222;
+          background: none;
+          color: #fff;
+          font-family: monospace;
+          white-space: nowrap;
+          letter-spacing: .10em;
+          max-width: 100%;
+          max-height: 300px;
+          min-width: 100%;
+          min-height: 300px;
+
+          &:focus {
+            outline: 1px solid #00ccff;
+          }
+        }
+      }
+
+      .name-and-email {
+        position: absolute;
+        top: 100px;
+        width: 90%;
+        height: fit-content;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        input {
+          width: 250px;
+          margin-left: 15px;
+          padding: 10px;
+          border: 1px solid #222;
+          background: none;
+          color: #fff;
+          font-family: monospace;
+          white-space: nowrap;
+          letter-spacing: .10em;
+          
+          &:focus {
+            outline: 1px solid #00ccff;
+          }
+        }
+      }
+
+    }
+
+    .twosection {
+      width: 33%;
+      height: 100%;
+      padding: 10px;
+
+      .wrapper-inner-content {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        .titile-what-cn-i-do {
+          color: #fff;
+          // position: absolute;
+          // top: 30px;
+          margin-top: 50px;
+          margin-left: 50px;
+          span {
+            width: 350px;
+            word-wrap: break-word;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            border-bottom: 1px solid #00ccff;
+          }
+
+          h6 {
+            width: 350px;
+            height: auto;
+            word-wrap: break-word;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+          }
+        }
+
+      }
 
       // background-color: rgba($color: #000, $alpha: .7);      
     }
