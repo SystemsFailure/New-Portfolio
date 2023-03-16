@@ -56,7 +56,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 0;
-  z-index: 5;
+  z-index: 7;
 
   .content {
     width: 100%;
