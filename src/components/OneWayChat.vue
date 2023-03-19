@@ -51,6 +51,7 @@
     </div>
 </template>
 <script>
+import { io } from "socket.io-client";
 
 const arr = () => []
 const arr2 = () => [
@@ -71,6 +72,16 @@ export default {
     },
 
     mounted() {
+        // const socket = io("http://localhost:3000");
+        const socket = io("https://back-end-portfolio.vercel.app");
+        socket.on('hello', () => {
+            console.log(socket.id)
+        })
+
+        // socket.on("disconnect", () => {
+            // console.log(socket.id);
+        // });
+
         if(localStorage.getItem('user-email')) this.auth = true
         else this.auth = false
         const inp = document.getElementById('inp-text')

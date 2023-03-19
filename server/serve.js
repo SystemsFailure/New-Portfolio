@@ -13,7 +13,7 @@ const jsonParser = bodyParser.json()
 
 app.use(
     cors({
-      origin: 'http://localhost:8080/'
+      origin: ['http://localhost:8080', 'https://back-end-portfolio.vercel.app']
     })
   )
 app.use(jsonParser)
@@ -21,15 +21,12 @@ app.use('/', router_mess)
 
 const server = createServer(app);
 const io = new Server(server, {
-    cors: 'http://localhost:8080/',
-    serveClient: false,
+    cors: ['http://localhost:8080', 'https://back-end-portfolio.vercel.app'],
 });
-io.on('connection', (socket) => {
-    socket.conn.on('update', () => {
-        console.log("upgraded transport", socket.conn.transport.name)
-    })    
-})
-app.listen(port, async () => {
+io.on("connection", (socket) => {
+    socket.emit("hello", "world");
+});
+server.listen(port, async () => {
     try {
         await sequelize.authenticate();
         await sequelize.sync({ alter: true });
