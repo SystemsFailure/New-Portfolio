@@ -71,15 +71,15 @@
           </div>
 
           <div class="name-and-email">
-            <input type="text" placeholder="name">
-            <input type="text" placeholder="email">
+            <input type="text" placeholder="name" v-model="nameQuery">
+            <input type="text" placeholder="email" v-model="emailQuery">
           </div>
 
           <div class="textarea-box">
-            <textarea name="" id="textarea-id-tx-messs" placeholder="message text"></textarea>
+            <textarea name="" id="textarea-id-tx-messs" placeholder="message text" v-model="textQuery"></textarea>
           </div>
 
-          <div class="btn-5">
+          <div class="btn-5" @click="sendToEmail">
             <span>Send</span>
           </div>
 
@@ -93,6 +93,8 @@
 
 <script>
 import NavigationBarComp from "@/components/NavigationBarComp";
+import axios from 'axios'
+import {mapState} from 'vuex'
 export default {
   name: "ResumeComp",
   data()
@@ -116,11 +118,34 @@ export default {
         {id: 2, title: 'Fron-end', content: 'Regarding the client side - I can develop a site from scratch. Core Web Framework : Vue(3 version and all related technologies), TypeScript, JS native, main http-client - Axios, also have some experience with GraphQL.'},
         {id: 3, title: 'Others', content: 'Figma design, Statistics & Analytics, 2D/3D data graphs in applicationsMachine Learning/DSP/AI (under study)Raspberry pi, Renegade Elite,orange pi,and others'},
 
-      ]
+      ],
+
+      nameQuery: '',
+      emailQuery: '',
+      textQuery: '',
     }
   },
-  methods: {
 
+  computed: {
+    ...mapState({
+      urlBackend: 'urlBackend',
+    })
+  },
+
+  methods: {
+    async sendToEmail() {
+      if(this.nameQuery && this.emailQuery && this.textQuery) {
+        await axios.post(this.urlBackend + '/sendToEmail', {data: {user_name: this.nameQuery, email: this.emailQuery, text: this.textQuery}}).then(res => {
+          if(res) {
+            console.log(res)
+          } else {
+            console.log('0111 not')
+          }
+        })
+      } else {
+        console.log('fields is not defined')
+      }
+    },
   },
   components: {
     NavigationBarComp,

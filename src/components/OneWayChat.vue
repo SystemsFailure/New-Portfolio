@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="chat">
-                    <div class="list-chat">
+                    <div class="list-chat" id="chat-wind">
                         <div class="it-mess" v-for="it in listMessage" :key="it.id" :style="it.to === 'admin' ? {'border-left' : '1px solid #999'} : undefined">
                             {{ it.content }}
                         </div>
@@ -51,7 +51,9 @@
     </div>
 </template>
 <script>
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
+import axios from "axios";
+import { mapState, mapMutations } from "vuex";
 
 const arr = () => []
 const arr2 = () => [
@@ -68,19 +70,23 @@ export default {
             inputField: '',
             showErrorOrWarning: false,
             
-        }
+        }   
+    },
+
+    computed: {
+        ...mapState({
+            socket: 'socket',
+            urlBackend: 'urlBackend',
+        }),
     },
 
     mounted() {
-        // const socket = io("http://localhost:3000");
-        const socket = io("https://back-end-portfolio.vercel.app");
-        socket.on('hello', () => {
-            console.log(socket.id)
+        this.getAllMessages()
+        this.setSocket()
+        // this.socket = io("http://localhost:3000");
+        this.socket.on('hello', (arg) => {
+            console.log(this.socket.id, arg)
         })
-
-        // socket.on("disconnect", () => {
-            // console.log(socket.id);
-        // });
 
         if(localStorage.getItem('user-email')) this.auth = true
         else this.auth = false
@@ -95,7 +101,33 @@ export default {
     },
 
     methods: {
-        send_message() {
+        ...mapMutations({
+            setSocket:'setSocket',
+        }),
+
+        scrollBellowChat() {
+            console.log('scroll bellow now')
+            let block = document.getElementById("chat-wind")
+            block.scrollTop = block.scrollHeight
+        },
+
+        async getAllMessages() {
+            const userEmail = localStorage.getItem('user-email') || null
+            if(userEmail === null) return;
+            await axios.get(this.urlBackend + '/getAllMessages', {
+                params: {userEmail: userEmail}
+            }).then(res => {
+                new Promise((resolve, reject) => {
+                    this.listMessage = res.data.list
+                    resolve()
+                    reject()
+                }).then(() => {
+                    this.scrollBellowChat()
+                })
+            })
+        },
+
+        async send_message() {
             const userEmail = localStorage.getItem('user-email') || null
             if(userEmail === null) {console.log('You need to autorized, through dont can to answer!'); this.showErrorOrWarning = true}
             else {
@@ -107,13 +139,44 @@ export default {
                     let message = {id: userEmail, content: this.inputField.trim(), to: 'admin', userEmail: userEmail, adminId: 3153243423}
                     this.listMessage.push(message)
                     this.inputField = ''
+                    await axios.post(this.urlBackend + '/sendMessage', {data: message}).then( res => {
+                        console.log('result from server, ', res.data.rs)
+                        if(res.data.rs) {
+
+                            this.socket.emit('updateList', {to: 'adminSUKA'}, (res) => {
+                                if(res.to === 'admin') {
+                                    console.log('admin ok/ update')
+                                    this.updateListMessage()
+                                } else {
+                                    console.log('no admin no ok/ no update')
+                                }
+                            })
+                        } else {
+                            console.log('res.data.rs, no')
+                        }
+                    })
+                    this.scrollBellowChat()
                 }
                 else 
                 {
                     console.log('you dont writed nothing')
                 }
-
             }
+        },
+
+        async updateListMessage() {
+            await axios.get(this.urlBackend + '/getAllMessages', {
+                params: {
+                    userEmail: 'ali@gmail.com'
+                }
+            }).then(res => {
+                console.log(res.data, res.data.list, 'dadadaadda')
+                if(res.data) {
+                    this.listMessage = res.data.list
+                } else {
+                    console.log('response in null')
+                }
+            })
         },
 
         addItemToArray(event) {
@@ -158,7 +221,7 @@ export default {
     justify-content: center;
 
     .wrapper {
-        width: 50%;
+        width: 100%;
         height: calc(80% - 50px);
         margin-top: auto;
         background-color: rgba($color: #000000, $alpha: .85);

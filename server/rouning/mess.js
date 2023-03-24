@@ -11,27 +11,54 @@ router.get('/', (req, res) => {
     console.log('hello')
 })
 
+router.get('/getClients', async (req, res) => {
+    try {
+        let list = []
+        const customersInst = await customers.findAll()
+        customersInst.forEach(el => {
+            let instanceCustomer = {
+                id: el.id,
+                name: el.name,
+                userEmail: el.email,
+                updatedAt: el.updatedAt,
+                createdAt: el.createdAt,
+            }
+            list.push(instanceCustomer)
+        })
+        res.send({list: list})
+    } catch (error) {
+        console.log('error : ', error)
+        res.send({result: false, message: error})
+    }
+})
+
 router.post('/reg', async (req, res) => {
     const data = {
-        email: req.body?.data?.email ? req.body?.body?.email : undefined,
+        email: req.body.data.email,
+        name: req.body.data.name,
     }
     try {
-        const customer = await customers.create({ name: "default", email: data.email });
-        await customer.save()
-        await customer.reload()
-        res.sendStatus(200).send({message: 'you been registered'})
+        if(req.body.data.email) {
+            const customer = await customers.create(data);
+            await customer.save()
+            await customer.reload()
+            res.send({message: 'you been registered'})
+        } else {
+            res.send({result: false, message: 'you dont to fil a fields'})
+        }
     } catch (error) {
-        res.sendStatus(400).send({err: error})
+        res.send({err: error})
     }
 })
 
 router.get('/getAllMessages', async (req, res) => {
     let arrayMessages = []
-    if(req.body.email) {
+    console.log(req.query.userEmail, req.query.userEmail, req.body.userEmail, req.params.userEmail)
+    if(req.query.userEmail) {
         try {
             const allMessages = await messages.findAll({
                 where: {
-                    userEmail: req.body.email
+                    userEmail: req.query.userEmail
                 }
             })
             allMessages.forEach(el => {
@@ -43,14 +70,17 @@ router.get('/getAllMessages', async (req, res) => {
                 }
                 arrayMessages.push(instanceList)
             })
-            res.send({messagesList: allMessages})
+            res.send({list: allMessages})
         } catch (error) {
             console.log(error)
         }
+    } else {
+        console.log('req.body.email is null')
     }
 })
 
 router.post('/sendMessage', async (req, res) => {
+    console.log('info :: ', req.body.data, req.body.message, req.body, req.baseUrl)
     if(req.body.data)
     {
         const message = await messages.create(
